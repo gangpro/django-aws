@@ -1,0 +1,15 @@
+{% extends 'boards/base.html' %}
+{% load bootstrap4 %}
+{% load socialaccount %}
+
+{% block body %}
+    <h1>로그인 페이지입니다.</h1>
+    <!-- action 에 빈 스트링으로 두면 현재 페이지로 로딩-->
+    <form action="" method="POST">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        {% buttons submit="로그인" reset="Cancel" %}
+        {% endbuttons %}
+</form>
+{% endblock %}
+

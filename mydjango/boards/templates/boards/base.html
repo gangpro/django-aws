@@ -1,0 +1,17 @@
+{% load bootstrap4 %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% bootstrap_css %}
+    <script src="https://kit.fontawesome.com/f788185e0b.js"></script>
+    <title>강민호 포트폴리오</title>
+</head>
+<body>
+    <div class="container">
+        {% block body %}
+        {% endblock %}
+    </div>
+    {% bootstrap_javascript jquery='full' %}
+</body>
+</html>

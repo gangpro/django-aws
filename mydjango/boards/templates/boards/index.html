@@ -1,0 +1,53 @@
+{% extends 'boards/base.html' %}
+
+{% block body %}
+<!-- Right-aligned nav -->
+    <ul class="nav justify-content-end">
+{% if user.is_authenticated %} <!--만약 사용자가 로그인 되어 있다면 -->
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'boards:index' %}">게시글 목록</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'boards:create' %}">게시글 작성</a>
+      </li>
+      <li class="nav-item">
+          <a class="nav-link" href="{% url 'accounts:update' %}">마이페이지</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'accounts:logout' %}">로그아웃</a>
+      </li>
+    </ul>
+{% else %}  <!--비회원이라면 -->
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'accounts:login' %}">로그인</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'accounts:signup' %}">회원가입</a>
+      </li>
+    </ul>
+{% endif %}
+
+<div class="jumbotron">
+    <h1>게시글 목록</h1>
+    {% if user.is_authenticated %}  <!--사용자 로그인했다면 True, 아니라면 False-->
+        <h3>{{ user.username }}님 안녕하세요!</h3>
+        <a class="btn btn-danger" href="{% url 'boards:create' %}">게시글 작성</a>
+    {% else %}
+        <p>새 글을 쓰려면 <b><a href="{% url 'accounts:login' %}">로그인</a></b>하세요.</p>
+    {% endif %}
+</div>
+
+{% for board in boards %}
+    <div class="card">
+        <div class="card-body">
+            <!--  1. 첫번째 글  -->
+            <p>{{ board.pk }}. {{board.title}}</p>
+            <a class="btn btn-info" href="{% url 'boards:detail' board.pk %}">글 상세보기</a>
+        </div>
+    </div>
+    <br />
+{% empty %}
+    <p><strong>아직 작성된 글이 없습니다.</strong></p>
+{% endfor %}
+
+{% endblock %}

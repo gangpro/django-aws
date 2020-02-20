@@ -1,0 +1,21 @@
+{% extends 'boards/base.html' %}
+{% load bootstrap4 %}
+
+{% block body %}
+    {% if request.resolver_match.url_name == 'create' %}
+    <h1>새로운 게시글 작성</h1>
+    {% else %} <!-- Update 가 들어오면 -->
+    <h1>게시글 수정</h1>
+    {% endif %}
+    <form action="" method="post">
+        {% csrf_token %}
+        {% bootstrap_form form layout='horizontal' %}
+        {% buttons submit="등록" reset="취소" %}
+        {% endbuttons %}
+    </form>
+    {% if request.resolver_match.url_name == 'create' %}
+    <a class="btn btn-secondary" href="{% url 'boards:index' %}">뒤로가기</a>
+    {% else %}
+    <a class="btn btn-secondary" href="{% url 'boards:detail' board_pk %}">뒤로가기</a>
+    {% endif %}
+{% endblock %}

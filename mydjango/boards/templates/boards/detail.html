@@ -1,0 +1,97 @@
+{% extends 'boards/base.html' %}
+{% load bootstrap4 %}
+
+{% block body %}
+<!-- Right-aligned nav -->
+    <ul class="nav justify-content-end">
+{% if user.is_authenticated %} <!--만약 사용자가 로그인 되어 있다면 -->
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'boards:index' %}">게시글 목록</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'boards:create' %}">게시글 작성</a>
+      </li>
+      <li class="nav-item">
+          <a class="nav-link" href="{% url 'accounts:update' %}">마이페이지</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'accounts:logout' %}">로그아웃</a>
+      </li>
+    </ul>
+{% else %}  <!--비회원이라면 -->
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'accounts:login' %}">로그인</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'accounts:signup' %}">회원가입</a>
+      </li>
+    </ul>
+{% endif %}
+
+    <h1>Detail</h1>
+    <hr />
+    {% include 'boards/_profile.html' %}
+    <p><b>글 번호:</b> {{ board.pk }}</p>
+    <p><b>글 제목:</b> {{ board.title }}</p>
+    <p><b>글 내용:</b> {{ board.content }}</p>
+    <p><b>글 생성시각:</b> {{ board.created_at }}</p>
+    <p><b>글 수정시각:</b> {{ board.updated_at }}</p>
+
+    <a class="text-danger" href="{% url 'boards:like' board.pk %}">
+        {% if user in board.like_users.all %}
+        <i class="far fa-thumbs-up"></i>
+        {% else %}
+        <i class="far fa-thumbs-up"></i>
+        {% endif %}
+    </a>
+    {{ board.like_users.all | length }}명이 좋아합니다.
+
+    <a class="text-success" href="{% url 'boards:dislike' board.pk %}">
+        {% if user in board.dislike_users.all %}
+        <i class="far fa-thumbs-down"></i>
+        {% else %}
+        <i class="far fa-thumbs-down"></i>
+        {% endif %}
+    </a>
+    {{ board.dislike_users.all | length }}명이 싫어합니다.
+
+    <hr />
+
+    <h4>댓글 목록</h4>
+    {% for comment in comments %}
+    <div>
+        {% if request.user == comment.user %}
+        <strong>댓글 작성자: {{ comment.user }}</strong>
+        <span class="ml-3">댓글 내용: {{ comment.content }}</span>
+        <form class="d-inline ml-4" action="{% url 'boards:comments_delete' board.pk comment.pk %}" method="post">
+            {% csrf_token %}
+            <input class="btn btn-link text-danger" type="submit" value="댓글삭제">
+        </form>
+        {% endif %}
+    </div>
+
+    {% empty %}
+    <p>아직 댓글이 없습니다.</p>
+    {% endfor %}
+
+    {% if user.is_authenticated %}
+    <form class="mt-3" action="{% url 'boards:comments_create' board.pk %}" method="post">
+        {% csrf_token %}
+        {% bootstrap_form comment_form %}
+        <input class="btn btn-primary" type="submit" value="댓글등록">
+    </form>
+    {% else %}
+    <br />
+    <p>댓글을 작성하려면 <a href="{% url 'accounts:login' %}">로그인</a></p>
+    {% endif %}
+    <hr />
+
+    {% if user == board.user %}  <!-- 요청을 보내는 유저가 게시글의 유저일때만 수정하기 버튼 보이게 처리 {# if user.is_authenticated #} -->
+    <form class="d-inline" action="{% url 'boards:delete' board.pk %}" method="post">
+        {% csrf_token %}
+        <input class="btn btn-danger" type="submit" value="삭제하기" />
+    </form>
+    <a class="btn btn-warning" href="{% url 'boards:update' board.pk %}">수정하기</a>
+    {% endif %}
+    <a class="btn btn-secondary" href="{% url 'boards:index' %}">뒤로가기</a>
+{% endblock %}

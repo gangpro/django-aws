@@ -1,0 +1,15 @@
+{% extends 'boards/base.html' %}
+{% load bootstrap4 %}
+
+{% block body %}
+
+    <h1>회원가입</h1>
+    <!-- action 빈칸인 이유는 POST accounts/signup/ 을 똑같이 보내기 때문에 -->
+    <form action="" method="post">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        {% buttons submit="회원가입" reset="Cancel" %}
+        {% endbuttons %}
+    </form>
+
+{% endblock %}
